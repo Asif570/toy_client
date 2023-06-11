@@ -17,7 +17,7 @@ import MyToys from "./pages/MyToys";
 import EditProduct from "./pages/EditProduct";
 import Alltoys from "./pages/Alltoys";
 import Search from "./pages/Search";
-const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
+
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -27,7 +27,7 @@ const routes = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
-      } /*
+      },
       {
         path: "/toys/:category",
         element: <Category />,
@@ -91,7 +91,7 @@ const routes = createBrowserRouter([
             <SingleProduct />
           </PrivetRoute>
         ),
-      },*/,
+      },
     ],
   },
 ]);

@@ -17,12 +17,12 @@ const EditProduct = () => {
       method: "PATCH",
       body: JSON.stringify(inputedData),
       headers: {
+        token: localStorage.getItem("jwtToken"),
         "Content-type": "application/json; charset=UTF-8",
       },
     })
       .then((res) =>
         res.json().then((data) => {
-          console.log(data);
           swal("Update Successfull", "", "success");
           navigator(form, { replace: true });
         })
@@ -38,15 +38,18 @@ const EditProduct = () => {
   };
   const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
   const [olddata, setOldedata] = useState();
-  const { Data } = useContext(Context);
+  const { categores, setReload, reload, user } = useContext(Context);
   useEffect(() => {
-    if (Data) {
-      const data = Data.cars.filter((item) => item._id === id);
-      setOldedata(data[0]);
-    }
-  }, [Data]);
+    fetch(`${baseurl}/toy/${id}`)
+      .then((res) =>
+        res.json().then((data) => {
+          setOldedata(data);
+        })
+      )
+      .catch((err) => console.log(err));
+  }, []);
   return (
-    <Wrapper className={"my-20  mt-[120px]"}>
+    <Wrapper className={"my-20 md:mt-0 mt-[120px]"}>
       <h3 className="text-center text-light text-3xl md:text-5xl font-bold font-head">
         Update Your Car
       </h3>
@@ -157,8 +160,8 @@ const EditProduct = () => {
             defaultValue={"Select"}
             className=" p-2 rounded-md outline-none border-none bg-light text-dark"
           >
-            {Data &&
-              Object.keys(Data?.category).map((item, i) => {
+            {categores &&
+              Object.keys(categores).map((item, i) => {
                 return (
                   <option value={item} key={i}>
                     {item}

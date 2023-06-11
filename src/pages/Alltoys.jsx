@@ -1,21 +1,22 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Wrapper from "../components/wrapper/Wrapper";
 import ToyItem from "../components/toyItem/ToyItem";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import swal from "sweetalert";
-import { Context } from "../layout/Layout";
 const Alltoys = () => {
-  const [items, setItems] = useState([]);
-  const [sellers, setSellers] = useState([]);
+  const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
+  const [items, setItems] = useState(null);
   const [searchQuery, setSerchQuery] = useState(null);
-  const { Data } = useContext(Context);
   useEffect(() => {
-    if (Data) {
-      setItems(Data.cars);
-      setSellers(Data.users);
-    }
-  }, [Data]);
+    fetch(`${baseurl}/byseller`)
+      .then((res) =>
+        res.json().then((data) => {
+          setItems(data);
+        })
+      )
+      .catch((err) => console.log(err));
+  }, []);
   const navigate = useNavigate();
   const onChangeHundler = (e) => {
     const { name, value } = e.target;
@@ -54,22 +55,20 @@ const Alltoys = () => {
         />
       </div>
       <div className="flex flex-col gap-16 ">
-        {sellers &&
-          sellers?.map((seller, i) => {
-            const itemsbyseller = items.filter(
-              (item) => item.sellerName === seller.userName
-            );
-            if (itemsbyseller.length < 1) {
+        {items &&
+          items.map((item, i) => {
+            const [key] = Object.keys(item);
+            if (item[key].length < 1) {
               return;
             }
             return (
               <div key={i} className="flex flex-col gap-5">
                 <h3 className="text-light font-bold font-head text-xl md:text-2xl uppercase">
-                  Seller : {seller.userName}
+                  Seller : {key}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  {itemsbyseller &&
-                    itemsbyseller?.map((val, i) => {
+                  {item &&
+                    item[key].map((val, i) => {
                       return <ToyItem key={i} data={val} />;
                     })}
                 </div>

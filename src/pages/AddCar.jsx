@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const AddCar = () => {
   const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
 
-  const { Data, user } = useContext(Context);
+  const { categores, setReload, reload, user } = useContext(Context);
 
   const [inputedData, setInputedData] = useState({});
   const onChangegInpute = (e) => {
@@ -57,10 +57,7 @@ const AddCar = () => {
       }),
     })
       .then((res) => {
-        res.json().then((data) => {
-          console.log(data);
-          swal("Item Add", "", "success");
-        });
+        res.json().then((data) => swal("Item Add", "", "success"));
       })
       .catch((err) => console.log(err));
     e.target.reset();
@@ -179,8 +176,8 @@ const AddCar = () => {
             defaultValue={"Select"}
             className=" p-2 rounded-md outline-none border-none bg-light text-dark w-full overflow-hidden"
           >
-            {Data &&
-              Object.keys(Data.category).map((item, i) => {
+            {categores &&
+              Object.keys(categores).map((item, i) => {
                 return (
                   <option
                     value={item}

@@ -6,9 +6,10 @@ import MytoyItem from "../components/mytoyItem/MytoyItem";
 import { useLocation, useNavigate } from "react-router-dom";
 import swal from "sweetalert";
 const MyToys = () => {
-  const { user, loadding, Data } = useContext(Context);
+  const { user, loadding } = useContext(Context);
   const [items, setItems] = useState(null);
   const [reload, setRealod] = useState(null);
+  const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
   const location = useLocation();
   const nevigator = useNavigate();
   const editHundler = (id) => {
@@ -27,11 +28,14 @@ const MyToys = () => {
       .catch((err) => console.log(err));
   };
   useEffect(() => {
-    if (Data) {
-      const data1 = Data.cars.filter((item) => item.email === user.email);
-      setItems(data1);
-    }
-  }, [reload, Data]);
+    fetch(`${baseurl}/mytoys`, {
+      headers: {
+        auth: user.email,
+      },
+    })
+      .then((res) => res.json().then((data) => setItems(data)))
+      .catch((err) => console.error(err));
+  }, [reload]);
   if (loadding) {
     <progress className="progress mt-20 bg-light  w-[100%] "></progress>;
     return;

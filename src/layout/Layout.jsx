@@ -1,4 +1,4 @@
-import { Await, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Header from "../components/header/Header";
 import Footer from "../components/footer/Footer";
 
@@ -9,20 +9,24 @@ export const Context = createContext();
 const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
 const Layout = () => {
   const [user, setUser] = useState();
-  const [Data, allData] = useState(null);
+  const [categores, setCategores] = useState(null);
   const [loadding, setLoadding] = useState(true);
 
   onAuthStateChanged(auth, (user) => {
     setUser(user);
     setLoadding(false);
   });
-  // useEffect(() => {
-  //   fetch(`${baseurl}/allData`).then((res) =>
-  //     res.json().then((data) => allData(data))
-  //   );
-  // }, []);
+  useEffect(() => {
+    fetch(`${baseurl}/catogery`)
+      .then((res) => {
+        res.json().then((data) => {
+          setCategores(data);
+        });
+      })
+      .catch((er) => console.log(er));
+  }, []);
 
-  const value = { user, loadding, setLoadding };
+  const value = { user, categores, loadding, setLoadding };
   return (
     <>
       <Context.Provider value={value}>

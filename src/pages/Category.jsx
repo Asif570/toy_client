@@ -8,7 +8,8 @@ import ToyItem from "../components/toyItem/ToyItem";
 
 const Category = () => {
   const { category } = useParams();
-  const { Data } = useContext(Context);
+  const { categores = {} } = useContext(Context);
+  const bassurl = import.meta.env.VITE_SERVER_BASS_URL;
   const [totalItem, setTotalItem] = useState(1);
   const [items, setItems] = useState([]);
   const [totalPage, setTotalPage] = useState(1);
@@ -17,16 +18,16 @@ const Category = () => {
   const [min, setMin] = useState(0);
   const [max, setMax] = useState(1000);
   let it;
-  if (Data && category) {
-    it = Data.cars.filter((item) => item.catogery === category);
+  if (categores) {
+    it = categores[category];
   }
 
   const limit = import.meta.env.VITE_ITEM_LIMIT_PER_PAGE;
 
   useEffect(() => {
-    setTotalItem(it.length);
-    setTotalPage(pagecount(it.length));
-  }, [it, Data]);
+    setTotalItem(it);
+    setTotalPage(pagecount(it));
+  }, [it]);
   useEffect(() => {
     fetch(
       `${bassurl}/toys?limit=${limit}&skip=${
@@ -35,7 +36,7 @@ const Category = () => {
     )
       .then((res) =>
         res.json().then((data) => {
-          setItems(data.result);
+          setItems(data);
         })
       )
       .catch((err) => console.error(err));
@@ -84,7 +85,6 @@ const Category = () => {
         </span>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 ">
           {items.map((item, i) => {
-            console.log(items);
             return <ToyItem data={item} key={i}></ToyItem>;
           })}
         </div>

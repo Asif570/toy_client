@@ -1,25 +1,18 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Wrapper from "../components/wrapper/Wrapper";
 import ToyItem from "../components/toyItem/ToyItem";
-import { Context } from "../layout/Layout";
 
 const Search = () => {
   const location = useLocation();
-
   const query = location.search.split("=")[1];
+  const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
   const [items, setItems] = useState([]);
-  const { Data } = useContext(Context);
   useEffect(() => {
-    if (Data) {
-      const items = Data.cars;
-      const data1 = items.filter((item) =>
-        item.name.toLowerCase().includes(query.toLowerCase())
-      );
-      setItems(data1);
-      console.log(data1);
-    }
-  }, [Data]);
+    fetch(`${baseurl}/toySearch?name=${query}`)
+      .then((res) => res.json().then((data) => setItems(data)))
+      .catch((err) => console.log(err));
+  }, []);
   return (
     <Wrapper className={"mt-[120px]"}>
       <h3 className="text-center mb-10 text-light  font-head text-xl md:text-3xl">

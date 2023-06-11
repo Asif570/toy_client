@@ -8,8 +8,7 @@ import { FaBars } from "react-icons/fa";
 
 const Header = () => {
   const [expend, setExpend] = useState(false);
-  const { user, Data } = useContext(Context);
-
+  const { user, categores } = useContext(Context);
   const logOutHundler = () => {
     signOut(auth);
     expendhundler();
@@ -40,8 +39,8 @@ const Header = () => {
             <li className="relative group " onClick={expendhundler}>
               <NavLink to="#">Category</NavLink>
               <ul className="bg-primery  w-[150px] absolute hidden group-hover:flex z-[100]  flex-col gap-1">
-                {Data
-                  ? Object.keys(Data.category).map((name, i) => {
+                {categores
+                  ? Object.keys(categores)?.map((name, i) => {
                       return (
                         <li
                           key={i}
@@ -49,8 +48,7 @@ const Header = () => {
                           onClick={expendhundler}
                         >
                           <Link to={`/toys/${name}`}>
-                            {name} &nbsp;
-                            {Data.category[name]}
+                            {name} = {categores[name]}
                           </Link>
                         </li>
                       );
@@ -156,12 +154,12 @@ const Header = () => {
             >
               <NavLink to="#">Category</NavLink>
               <ul className="bg-primery  w-[150px] absolute hidden group-hover:flex z-50  flex-col gap-1">
-                {Data
-                  ? Object.keys(Data.category)?.map((name, i) => {
+                {categores
+                  ? Object.keys(categores)?.map((name, i) => {
                       return (
                         <li key={i} className=" hover:bg-dark/10 p-2 ">
                           <Link to={`/toys/${name}`}>
-                            {name} = {Data.category[name]}
+                            {name} = {categores[name]}
                           </Link>
                         </li>
                       );

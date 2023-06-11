@@ -9,7 +9,17 @@ const Blogs = () => {
   const { user } = useContext(Context);
 
   const [pined, setPined] = useState([]);
-  useEffect(() => {}, [pined, user]);
+  useEffect(() => {
+    fetch(`${baseurl}/pinblog`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        auth: user?.email,
+      },
+    })
+      .then((res) => res.json().then((data) => setPined(data.blogs)))
+      .catch((err) => console.log(err));
+  }, [pined, user]);
   const data = [
     {
       id: 1,

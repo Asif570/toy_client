@@ -3,50 +3,52 @@ import Wrapper from "../wrapper/Wrapper";
 import { useState } from "react";
 import pagecount from "../../util/paginationPageCount";
 import ToyItem from "../toyItem/ToyItem";
-import axios from "axios";
+import { Context } from "../../layout/Layout";
 const OurToys = () => {
+  const bassurl = import.meta.env.VITE_SERVER_BASS_URL;
   const [totalItem, setTotalItem] = useState(1);
   const [items, setItems] = useState([]);
   const [totalPage, setTotalPage] = useState(1);
   const [currentpage, setCurrentpage] = useState(0);
-  const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
+  const limit = import.meta.env.VITE_ITEM_LIMIT_PER_PAGE;
+
   useEffect(() => {
-    axios
-      .get(
-        `${baseurl}/toys?skip=${currentpage * 6}&limit=${
-          import.meta.env.VITE_ITEM_LIMIT_PER_PAGE
-        }`
-      )
-      .then((data) => {
-        const res = data.data.result;
-        setItems(res);
-      });
-  }, [currentpage]);
-  useEffect(() => {
-    axios.get(`${baseurl}/toycount`).then((data) => {
-      const res = data.data.result;
-      setTotalItem(res);
-      setTotalPage(pagecount(totalItem));
-    });
+    fetch(`${bassurl}/toycount`)
+      .then((res) => {
+        res.json().then((data) => {
+          const items = data.result;
+          setTotalItem(items);
+          setTotalPage(pagecount(items));
+        });
+      })
+      .catch((e) => console.log(e));
   }, []);
+  useEffect(() => {
+    fetch(`${bassurl}/toys?limit=${limit}&skip=${currentpage * limit}`)
+      .then((res) =>
+        res.json().then((data) => {
+          setItems(data);
+        })
+      )
+      .catch((err) => console.error(err));
+  }, [currentpage]);
 
   const currentpagehundle = (i) => {
     setCurrentpage(i);
   };
-
   return (
     <>
       <Wrapper>
         <h3 className="text-3xl md:text-5xl font-bold text-center font-head text-light my-20">
           Our Cars
         </h3>
-        <p className="mb-5">
-          <strong>Total Items : </strong>
-          {totalItem}
-        </p>
+
+        <span className="mb-3 block capitalize text-light">
+          <strong> total Items</strong> : {totalItem}
+        </span>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 ">
           {items ? (
-            items?.map((item, i) => {
+            items.map((item, i) => {
               return <ToyItem data={item} key={i}></ToyItem>;
             })
           ) : (

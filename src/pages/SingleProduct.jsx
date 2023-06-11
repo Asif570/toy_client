@@ -14,7 +14,7 @@ const SingleProduct = () => {
     fetch(`${baseurl}/toy/${id}`)
       .then((res) =>
         res.json().then((data) => {
-          setItem(data.result);
+          setItem(data);
         })
       )
       .catch((err) => console.log(err));
@@ -24,7 +24,7 @@ const SingleProduct = () => {
       fetch(`${baseurl}/toys?catogry = ${item.catogery}`)
         .then((res) =>
           res.json().then((data) => {
-            setRelaventItem(data.result);
+            setRelaventItem(data);
           })
         )
         .catch((err) => console.log(err));
