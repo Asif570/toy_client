@@ -58,7 +58,6 @@ const Blogs = () => {
       ],
     },
   ];
-  console.log(pined);
   const pinedHundler = (id) => {
     if (!user) {
       swal("Please Login Frist", "", "warning");

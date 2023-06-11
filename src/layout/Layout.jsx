@@ -5,8 +5,8 @@ import Footer from "../components/footer/Footer";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 import { createContext, useEffect, useState } from "react";
+import tittle from "../util/tittle";
 export const Context = createContext();
-const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
 const Layout = () => {
   const [user, setUser] = useState();
   const [loadding, setLoadding] = useState(true);
@@ -15,7 +15,6 @@ const Layout = () => {
     setUser(user);
     setLoadding(false);
   });
-
   const value = { user, loadding, setLoadding };
   return (
     <>
