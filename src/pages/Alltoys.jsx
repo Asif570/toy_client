@@ -4,17 +4,18 @@ import ToyItem from "../components/toyItem/ToyItem";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import swal from "sweetalert";
+import axios from "axios";
 const Alltoys = () => {
   const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
   const [items, setItems] = useState(null);
   const [searchQuery, setSerchQuery] = useState(null);
   useEffect(() => {
-    fetch(`${baseurl}/byseller`)
-      .then((res) =>
-        res.json().then((data) => {
-          setItems(data);
-        })
-      )
+    axios
+      .get(`${baseurl}/byseller`)
+      .then((data) => {
+        const res = data.data.result;
+        setItems(res);
+      })
       .catch((err) => console.log(err));
   }, []);
   const navigate = useNavigate();

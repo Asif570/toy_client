@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Wrapper from "../components/wrapper/Wrapper";
 import ToyItem from "../components/toyItem/ToyItem";
+import axios from "axios";
 
 const Search = () => {
   const location = useLocation();
@@ -9,8 +10,12 @@ const Search = () => {
   const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
   const [items, setItems] = useState([]);
   useEffect(() => {
-    fetch(`${baseurl}/toySearch?name=${query}`)
-      .then((res) => res.json().then((data) => setItems(data)))
+    axios
+      .get(`${baseurl}/toySearch?name=${query}`)
+      .then((data) => {
+        const res = data.data.result;
+        setItems(res);
+      })
       .catch((err) => console.log(err));
   }, []);
   return (
