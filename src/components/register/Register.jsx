@@ -13,6 +13,7 @@ import { auth } from "../../firebase/firebase";
 import swal from "sweetalert";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Context } from "../../layout/Layout";
+import axios from "axios";
 const Register = () => {
   const { user, loadding } = useContext(Context);
   const location = useLocation();
@@ -46,14 +47,17 @@ const Register = () => {
           photoURL: photoURL,
         })
           .then((res) => {
-            console.log(res);
-            fetch(`${baseurl}/adduser`, {
-              headers: {
-                auth: email,
-                userName: name,
-              },
-            })
-              .then((res) => localStorage.setItem("jwtToken", res.token))
+            axios
+              .get(`${baseurl}/adduser`, {
+                headers: {
+                  auth: email,
+                  userName: name,
+                },
+              })
+              .then((res) => {
+                console.log(res.token);
+                localStorage.setItem("jwtToken", res.data.token);
+              })
               .catch((err) => console.error(err));
           })
           .catch((err) => console.log(err));
@@ -75,14 +79,16 @@ const Register = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then((res) => {
-        console.log(res);
-        fetch(`${baseurl}/adduser`, {
-          headers: {
-            auth: res.user.email,
-            userName: res.user.displayName,
-          },
-        })
-          .then((res) => localStorage.setItem("jwtToken", res.token))
+        axios
+          .get(`${baseurl}/adduser`, {
+            headers: {
+              auth: res.user.email,
+              userName: res.user.displayName,
+            },
+          })
+          .then((res) => {
+            localStorage.setItem("jwtToken", res.data.token);
+          })
           .catch((err) => console.error(err));
       })
       .then(() => {

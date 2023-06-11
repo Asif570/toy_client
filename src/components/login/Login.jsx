@@ -11,6 +11,7 @@ import {
 import { auth } from "../../firebase/firebase";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Context } from "../../layout/Layout";
+import axios from "axios";
 const Login = () => {
   const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
   const navigate = useNavigate();
@@ -37,13 +38,14 @@ const Login = () => {
     if (!password) return;
     signInWithEmailAndPassword(auth, email, password)
       .then((res) => {
-        fetch(`${baseurl}/adduser`, {
-          headers: {
-            auth: email,
-            userName: res.user.displayName,
-          },
-        })
-          .then((res) => localStorage.setItem("jwtToken", res.token))
+        axios
+          .get(`${baseurl}/adduser`, {
+            headers: {
+              auth: email,
+              userName: res.user.displayName,
+            },
+          })
+          .then((res) => localStorage.setItem("jwtToken", res.data.token))
           .catch((err) => console.error(err));
       })
       .then(() => {
@@ -64,13 +66,14 @@ const Login = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then((res) => {
-        fetch(`${baseurl}/adduser`, {
-          headers: {
-            auth: res.user.email,
-            userName: res.user.displayName,
-          },
-        })
-          .then((res) => localStorage.setItem("jwtToken", res.token))
+        axios
+          .get(`${baseurl}/adduser`, {
+            headers: {
+              auth: res.user.email,
+              userName: res.user.displayName,
+            },
+          })
+          .then((res) => localStorage.setItem("jwtToken", res.data.token))
           .catch((err) => console.error(err));
       })
       .then(() => {

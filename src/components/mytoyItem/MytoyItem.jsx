@@ -20,7 +20,7 @@ const MytoyItem = ({ data, editHundler, deleteHundler }) => {
         <span className="hidden md:block">Model :{data.model} </span>
         <span className="hidden md:block">Brand: {data.brand} </span>
       </div>
-      <div className="ml-auto flex md:block ">
+      <div className="ml-auto flex  ">
         <BiPencil
           className="cursor-pointer mx-5"
           onClick={() => {

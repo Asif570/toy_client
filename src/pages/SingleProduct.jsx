@@ -3,6 +3,7 @@ import Wrapper from "../components/wrapper/Wrapper";
 import { useState } from "react";
 import { useEffect } from "react";
 import ToyItem from "../components/toyItem/ToyItem";
+import axios from "axios";
 
 const SingleProduct = () => {
   const [item, setItem] = useState(null);
@@ -11,22 +12,24 @@ const SingleProduct = () => {
   const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
 
   useEffect(() => {
-    fetch(`${baseurl}/toy/${id}`)
-      .then((res) =>
-        res.json().then((data) => {
-          setItem(data);
-        })
-      )
+    axios
+      .get(`${baseurl}/toy/${id}`)
+      .then((data) => {
+        const res = data.data.result;
+        setItem(res);
+      })
+
       .catch((err) => console.log(err));
   }, [id]);
   useEffect(() => {
     if (item) {
-      fetch(`${baseurl}/toys?catogry = ${item.catogery}`)
-        .then((res) =>
-          res.json().then((data) => {
-            setRelaventItem(data);
-          })
-        )
+      axios
+        .get(`${baseurl}/toys?catogry = ${item.catogery}`)
+        .then((data) => {
+          const res = data.data.result;
+          setRelaventItem(res);
+        })
+
         .catch((err) => console.log(err));
     }
   }, [item]);
@@ -36,7 +39,7 @@ const SingleProduct = () => {
         {!item ? (
           <progress className="progress mt-20 bg-light  w-[100%] "></progress>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2  gap-10">
             <div>
               <img src={item?.image} alt="" className="h-[100%]" />
             </div>
@@ -84,7 +87,7 @@ const SingleProduct = () => {
           <h3 className="text-lg md:text-xl font-bold text-light mb-5">
             Most relavent :
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-5">
             {relaventitem ? (
               relaventitem.map((item) => {
                 return <ToyItem data={item} key={item._id} />;

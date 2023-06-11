@@ -1,12 +1,19 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Wrapper from "../components/wrapper/Wrapper";
 import { Context } from "../layout/Layout";
 import swal from "sweetalert";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const AddCar = () => {
   const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
-
-  const { categores, setReload, reload, user } = useContext(Context);
+  useEffect(() => {
+    axios.get(`${baseurl}/catogery`).then((data) => {
+      const res = data.data.result;
+      setCategores(res);
+    });
+  }, []);
+  const [categores, setCategores] = useState([]);
+  const { user } = useContext(Context);
 
   const [inputedData, setInputedData] = useState({});
   const onChangegInpute = (e) => {
@@ -36,12 +43,8 @@ const AddCar = () => {
 
     features = features.split("//");
 
-    fetch(`${baseurl}/addtoy`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    axios
+      .post(`${baseurl}/addtoy`, {
         name,
         brand,
         price,
@@ -54,10 +57,9 @@ const AddCar = () => {
         sellerName,
         email,
         sellerImage,
-      }),
-    })
+      })
       .then((res) => {
-        res.json().then((data) => swal("Item Add", "", "success"));
+        swal("Item Add", "", "success");
       })
       .catch((err) => console.log(err));
     e.target.reset();

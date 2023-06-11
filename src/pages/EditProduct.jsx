@@ -1,32 +1,30 @@
 import { useContext, useEffect, useState } from "react";
 import Wrapper from "../components/wrapper/Wrapper";
-import { Context } from "../layout/Layout";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import swal from "sweetalert";
+import axios from "axios";
 const EditProduct = () => {
+  const [categores, setCategores] = useState([]);
   const { id } = useParams();
   const location = useLocation();
   const navigator = useNavigate();
   const form = location?.state || "/";
   const [inputedData, setInputedData] = useState();
-
+  useEffect(() => {
+    axios.get(`${baseurl}/catogery`).then((data) => {
+      const res = data.data.result;
+      setCategores(res);
+    });
+  }, []);
   const onSubmithundler = (e) => {
     e.preventDefault();
 
-    fetch(`${baseurl}/toy/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify(inputedData),
-      headers: {
-        token: localStorage.getItem("jwtToken"),
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((res) =>
-        res.json().then((data) => {
-          swal("Update Successfull", "", "success");
-          navigator(form, { replace: true });
-        })
-      )
+    axios
+      .patch(`${baseurl}/toy/${id}`, inputedData)
+      .then((res) => {
+        swal("Update Successfull", "", "success");
+        navigator(form, { replace: true });
+      })
       .catch((err) => console.log(err));
   };
   const onChangegInpute = (e) => {
@@ -38,18 +36,17 @@ const EditProduct = () => {
   };
   const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
   const [olddata, setOldedata] = useState();
-  const { categores, setReload, reload, user } = useContext(Context);
   useEffect(() => {
-    fetch(`${baseurl}/toy/${id}`)
-      .then((res) =>
-        res.json().then((data) => {
-          setOldedata(data);
-        })
-      )
+    axios
+      .get(`${baseurl}/toy/${id}`)
+      .then((data) => {
+        const res = data.data.result;
+        setOldedata(res);
+      })
       .catch((err) => console.log(err));
   }, []);
   return (
-    <Wrapper className={"my-20 md:mt-0 mt-[120px]"}>
+    <Wrapper className={"my-20  mt-[120px]"}>
       <h3 className="text-center text-light text-3xl md:text-5xl font-bold font-head">
         Update Your Car
       </h3>

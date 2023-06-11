@@ -5,6 +5,7 @@ import Wrapper from "../components/wrapper/Wrapper";
 import MytoyItem from "../components/mytoyItem/MytoyItem";
 import { useLocation, useNavigate } from "react-router-dom";
 import swal from "sweetalert";
+import axios from "axios";
 const MyToys = () => {
   const { user, loadding } = useContext(Context);
   const [items, setItems] = useState(null);
@@ -16,24 +17,25 @@ const MyToys = () => {
     nevigator(`/mytoy/edit/${id}`, { state: location.pathname });
   };
   const deleteHundler = (id) => {
-    fetch(`${baseurl}/toy/${id}`, {
-      method: "DELETE",
-    })
-      .then((res) =>
-        res.json().then((data) => {
-          swal("Delete Success", "", "success");
-          setRealod(!reload);
-        })
-      )
+    axios
+      .delete(`${baseurl}/toy/${id}`)
+      .then((res) => {
+        swal("Delete Success", "", "success");
+        setRealod(!reload);
+      })
       .catch((err) => console.log(err));
   };
   useEffect(() => {
-    fetch(`${baseurl}/mytoys`, {
-      headers: {
-        auth: user.email,
-      },
-    })
-      .then((res) => res.json().then((data) => setItems(data)))
+    axios
+      .get(`${baseurl}/mytoys`, {
+        headers: {
+          auth: user.email,
+        },
+      })
+      .then((data) => {
+        const res = data.data.result;
+        setItems(res);
+      })
       .catch((err) => console.error(err));
   }, [reload]);
   if (loadding) {
