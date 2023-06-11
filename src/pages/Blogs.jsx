@@ -3,6 +3,7 @@ import Wrapper from "../components/wrapper/Wrapper";
 import { AiOutlinePushpin, AiFillPushpin } from "react-icons/ai";
 import { Context } from "../layout/Layout";
 import swal from "sweetalert";
+import axios from "axios";
 
 const Blogs = () => {
   const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
@@ -10,16 +11,17 @@ const Blogs = () => {
 
   const [pined, setPined] = useState([]);
   useEffect(() => {
-    fetch(`${baseurl}/pinblog`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        auth: user?.email,
-      },
-    })
-      .then((res) => res.json().then((data) => setPined(data.blogs)))
-      .catch((err) => console.log(err));
-  }, [pined, user]);
+    axios
+      .get(`${baseurl}/pinblog`, {
+        headers: {
+          auth: user?.email,
+        },
+      })
+      .then((data) => {
+        const res = data.data.result.blogs;
+        setPined(res);
+      });
+  }, [user]);
   const data = [
     {
       id: 1,
@@ -56,7 +58,7 @@ const Blogs = () => {
       ],
     },
   ];
-
+  console.log(pined);
   const pinedHundler = (id) => {
     if (!user) {
       swal("Please Login Frist", "", "warning");
@@ -65,31 +67,23 @@ const Blogs = () => {
     if (pined.includes(id)) {
       const data2 = pined.filter((Id) => Id !== id);
       setPined(data2);
-      fetch(`${baseurl}/pinblog`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+
+      axios
+        .post(`${baseurl}/pinblog`, {
           email: user.email,
           blog: data2,
-        }),
-      })
-        .then()
+        })
+        .then((res) => {})
         .catch((er) => console.log(er));
       return;
     }
     const data3 = [...pined, id];
-    fetch(`${baseurl}/pinblog`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    axios
+      .post(`${baseurl}/pinblog`, {
         email: user.email,
         blog: data3,
-      }),
-    })
+      })
+
       .then()
       .catch((er) => console.log(er));
     setPined(data3);
@@ -106,7 +100,7 @@ const Blogs = () => {
               key={item.id}
               className=" mt-20 border p-2 rounded-md relative"
             >
-              {pined.includes(item.id) ? (
+              {pined?.includes(item.id) ? (
                 <AiFillPushpin
                   onClick={() => {
                     pinedHundler(item.id);

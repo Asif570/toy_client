@@ -5,11 +5,19 @@ import { Context } from "../layout/Layout";
 import Wrapper from "../components/wrapper/Wrapper";
 import pagecount from "../util/paginationPageCount";
 import ToyItem from "../components/toyItem/ToyItem";
+import axios from "axios";
 
 const Category = () => {
-  const { category } = useParams();
-  const { categores = {} } = useContext(Context);
   const bassurl = import.meta.env.VITE_SERVER_BASS_URL;
+  const { category } = useParams();
+  const [categores, setCategores] = useState([]);
+  const [reset, setReset] = useState(false);
+  useEffect(() => {
+    axios.get(`${bassurl}/catogery`).then((data) => {
+      const res = data.data.result;
+      setCategores(res);
+    });
+  }, []);
   const [totalItem, setTotalItem] = useState(1);
   const [items, setItems] = useState([]);
   const [totalPage, setTotalPage] = useState(1);
@@ -21,7 +29,11 @@ const Category = () => {
   if (categores) {
     it = categores[category];
   }
-
+  const resethundler = () => {
+    setMax(999);
+    setMin(0);
+    setReset(!reset);
+  };
   const limit = import.meta.env.VITE_ITEM_LIMIT_PER_PAGE;
 
   useEffect(() => {
@@ -29,18 +41,18 @@ const Category = () => {
     setTotalPage(pagecount(it));
   }, [it]);
   useEffect(() => {
-    fetch(
-      `${bassurl}/toys?limit=${limit}&skip=${
-        currentpage * limit
-      }&catogery=${category}&color=${color}&min=${min}&max=${max}`
-    )
-      .then((res) =>
-        res.json().then((data) => {
-          setItems(data);
-        })
+    axios
+      .get(
+        `${bassurl}/toys?limit=${limit}&skip=${
+          currentpage * limit
+        }&catogery=${category}&color=${color}&min=${min}&max=${max}`
       )
+      .then((data) => {
+        const res = data.data.result;
+        setItems(res);
+      })
       .catch((err) => console.error(err));
-  }, [currentpage, category, color, min, max]);
+  }, [currentpage, category, color, min, max, reset]);
   const colorhundler = (e) => {
     setColor(e.target.value);
   };
@@ -82,6 +94,9 @@ const Category = () => {
 
           <input type="text" placeholder="Min" onChange={minPricehundler} />
           <input type="text" placeholder="Max " onChange={maxPricehundler} />
+          <button className="btn md:ml-5" onClick={resethundler}>
+            Reset
+          </button>
         </span>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 ">
           {items.map((item, i) => {
