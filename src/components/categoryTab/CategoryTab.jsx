@@ -3,9 +3,16 @@ import Wrapper from "../wrapper/Wrapper";
 import { Context } from "../../layout/Layout";
 import { useEffect } from "react";
 import ToyItem from "../toyItem/ToyItem";
+import axios from "axios";
 const CategoryTab = () => {
   const bassurl = import.meta.env.VITE_SERVER_BASS_URL;
-  const { categores } = useContext(Context);
+  const [categores, setCategores] = useState([]);
+  useEffect(() => {
+    axios.get(`${bassurl}/catogery`).then((data) => {
+      const res = data.data.result;
+      setCategores(res);
+    });
+  }, []);
   const [active, setActive] = useState("sports car");
   const [items, setItems] = useState(null);
   const activehundler = (name) => {
@@ -13,12 +20,12 @@ const CategoryTab = () => {
   };
   useEffect(() => {
     setItems(null);
-    fetch(`${bassurl}/toys?limit=${99}&catogery=${active}`)
-      .then((res) =>
-        res.json().then((data) => {
-          setItems(data);
-        })
-      )
+    axios
+      .get(`${bassurl}/toys?limit=${99}&catogery=${active}`)
+      .then((data) => {
+        const res = data.data.result;
+        setItems(res);
+      })
       .catch((err) => console.error(err));
   }, [active]);
   if (!categores) {

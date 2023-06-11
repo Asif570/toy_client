@@ -1,14 +1,23 @@
 import { Link, NavLink } from "react-router-dom";
 import Wrapper from "../wrapper/Wrapper";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "../../layout/Layout";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
 import { FaBars } from "react-icons/fa";
+import axios from "axios";
 
 const Header = () => {
+  const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
   const [expend, setExpend] = useState(false);
-  const { user, categores } = useContext(Context);
+  const [categores, setCategores] = useState([]);
+  useEffect(() => {
+    axios.get(`${baseurl}/catogery`).then((data) => {
+      const res = data.data.result;
+      setCategores(res);
+    });
+  }, []);
+  const { user } = useContext(Context);
   const logOutHundler = () => {
     signOut(auth);
     expendhundler();

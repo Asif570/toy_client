@@ -4,6 +4,7 @@ import { useState } from "react";
 import pagecount from "../../util/paginationPageCount";
 import ToyItem from "../toyItem/ToyItem";
 import { Context } from "../../layout/Layout";
+import axios from "axios";
 const OurToys = () => {
   const bassurl = import.meta.env.VITE_SERVER_BASS_URL;
   const [totalItem, setTotalItem] = useState(1);
@@ -13,23 +14,23 @@ const OurToys = () => {
   const limit = import.meta.env.VITE_ITEM_LIMIT_PER_PAGE;
 
   useEffect(() => {
-    fetch(`${bassurl}/toycount`)
-      .then((res) => {
-        res.json().then((data) => {
-          const items = data.result;
-          setTotalItem(items);
-          setTotalPage(pagecount(items));
-        });
+    axios
+      .get(`${bassurl}/toycount`)
+      .then((data) => {
+        const res = data.data.result;
+        setTotalItem(res);
+        setTotalPage(pagecount(res));
       })
+
       .catch((e) => console.log(e));
   }, []);
   useEffect(() => {
-    fetch(`${bassurl}/toys?limit=${limit}&skip=${currentpage * limit}`)
-      .then((res) =>
-        res.json().then((data) => {
-          setItems(data);
-        })
-      )
+    axios
+      .get(`${bassurl}/toys?limit=${limit}&skip=${currentpage * limit}`)
+      .then((data) => {
+        const res = data.data.result;
+        setItems(res);
+      })
       .catch((err) => console.error(err));
   }, [currentpage]);
 

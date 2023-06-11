@@ -9,24 +9,14 @@ export const Context = createContext();
 const baseurl = import.meta.env.VITE_SERVER_BASS_URL;
 const Layout = () => {
   const [user, setUser] = useState();
-  const [categores, setCategores] = useState(null);
   const [loadding, setLoadding] = useState(true);
 
   onAuthStateChanged(auth, (user) => {
     setUser(user);
     setLoadding(false);
   });
-  useEffect(() => {
-    fetch(`${baseurl}/catogery`)
-      .then((res) => {
-        res.json().then((data) => {
-          setCategores(data);
-        });
-      })
-      .catch((er) => console.log(er));
-  }, []);
 
-  const value = { user, categores, loadding, setLoadding };
+  const value = { user, loadding, setLoadding };
   return (
     <>
       <Context.Provider value={value}>
